@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Show me the Data</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            margin: 20px;
+        }
+        button {
+            margin: 10px 0;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+        .output {
+            margin-top: 10px;
+            border: 1px solid #ccc;
+            padding: 10px;
+            background-color: #f9f9f9;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Show me the Data</h1>
+        <div>
+            <h3>Dog Fact</h3>
+            <button onclick="fetchData(1)">Get Dog Fact</button>
+            <div id="output1" class="output">No dog fact fetched yet.</div>
+        </div>
+        <div>
+            <h3>Dog Rhyme</h3>
+            <button onclick="fetchData(2)">Get Dog Rhyme</button>
+            <div id="output2" class="output">No dog rhyme fetched yet.</div>
+        </div>
+        <div>
+            <h3>Dog Image</h3>
+            <button onclick="fetchData(3)">Get Dog Image</button>
+            <div id="output3" class="output">No dog image fetched yet.</div>
+        </div>
+    </div>
+
+    <script>
+        async function fetchData(site) {
+            let url = '';
+            let outputElement = '';
+            switch (site) {
+                case 1:
+                    url = 'https://dog-api.kinduff.com/api/facts';
+                    outputElement = document.getElementById('output1');
+                    break;
+                case 2:
+                    url = 'https://rhymebrain.com/talk?function=getRhymes&word=dog';
+                    outputElement = document.getElementById('output2');
+                    break;
+                case 3:
+                    url = 'https://dog.ceo/api/breeds/image/random';
+                    outputElement = document.getElementById('output3');
+                    break;
+                default:
+                    outputElement = document.getElementById('output1');
+                    break;
+            }
+
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                if (site === 1) {
+                    outputElement.innerHTML = `<p>${data.facts[0]}</p>`;
+                } else if (site === 2) {
+                    if (Array.isArray(data) && data.length > 0) {
+                        const randomIndex = Math.floor(Math.random() * data.length);
+                        const randomRhyme = data[randomIndex].word;
+                        outputElement.innerHTML = `<p>${randomRhyme}</p>`;
+                    }
+                } else if (site === 3) {
+                    outputElement.innerHTML = `<img src="${data.message}" alt="Random Dog Image">`;
+                }
+            } catch (error) {
+                outputElement.innerHTML = `<p>Error fetching data: ${error.message}</p>`;
+            }
+        }
+    </script>
+</body>
+</html>
